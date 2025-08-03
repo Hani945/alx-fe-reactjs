@@ -6,56 +6,81 @@ const Search = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // ✅ Function required by checker
   const fetchUserData = async (searchTerm) => {
+    setLoading(true);
+    setError('');
     try {
-      setLoading(true);
-      setError('');
       const response = await fetch(`https://api.github.com/search/users?q=${searchTerm}`);
       const data = await response.json();
-
       if (data.items && data.items.length > 0) {
-        setUsers(data.items);
+        // Fetch details for each user (to get location, html_url, etc.)
+        const detailedUsers = await Promise.all(
+          data.items.map(async (user) => {
+            const res = await fetch(user.url); // user.url gives full user profile
+            return await res.json();
+          })
+        );
+        setUsers(detailedUsers);
       } else {
         setUsers([]);
         setError("Looks like we cant find the user");
       }
     } catch (err) {
-      setError("Something went wrong while fetching data");
+      console.error(err);
+      setError("An error occurred while fetching data.");
     } finally {
       setLoading(false);
     }
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault(); // ✅ required
-    if (query.trim() !== '') {
-      fetchUserData(query);
+    e.preventDefault();
+    if (query.trim()) {
+      fetchUserData(query.trim());
     }
   };
 
   return (
-    <div className="p-6 max-w-xl mx-auto">
-      <form onSubmit={handleSubmit} className="mb-6">
+    <div className="max-w-xl mx-auto">
+      <form onSubmit={handleSubmit} className="flex items-center gap-2 mb-4">
         <input
           type="text"
+          placeholder="Search GitHub users..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search GitHub users..."
-          className="border border-gray-400 px-4 py-2 rounded-l w-2/3"
+          className="flex-1 p-2 border border-gray-300 rounded"
         />
-        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded-r">
+        <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded">
           Search
         </button>
       </form>
 
-      {loading && <p>Loading...</p>}
+      {loading && <p className="text-center">Loading...</p>}
+      {error && <p className="text-red-600 text-center">{error}</p>}
 
-      {error && <p className="text-red-600">{error}</p>}
-
-      <div>
+      <div className="grid gap-4">
         {users.map((user) => (
-          <div key={user.id} className="border p-4 mb-4 rounded shadow">
-            <img src={user.avatar_url} alt={user.login} className="w-16 h-16 rounded-full mb-2" />
-            <p><strong>Username:</strong> {user.login}</p>
-            {/* Optional add*
+          <div key={user.id} className="p-4 border rounded shadow bg-white">
+            <div className="flex items-center gap-4">
+              <img src={user.avatar_url} alt={user.login} className="w-16 h-16 rounded-full" />
+              <div>
+                <h2 className="text-lg font-semibold">{user.login}</h2>
+                <p className="text-sm text-gray-600">Location: {user.location || 'Not available'}</p>
+                <a
+                  href={user.html_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500 underline text-sm"
+                >
+                  View Profile
+                </a>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default Search;
