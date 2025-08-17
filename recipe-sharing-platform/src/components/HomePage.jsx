@@ -11,6 +11,7 @@ function HomePage() {
       .then((data) => setRecipes(data));
   }, []);
 
+  // Function to add a new recipe
   const handleAddRecipe = (newRecipe) => {
     setRecipes((prev) => [newRecipe, ...prev]);
   };

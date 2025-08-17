@@ -4,41 +4,45 @@ function AddRecipeForm({ onAddRecipe }) {
   const [title, setTitle] = useState("");
   const [ingredients, setIngredients] = useState("");
   const [steps, setSteps] = useState("");
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState({}); // ✅ plural "errors"
+
+  // ✅ validation function
+  const validate = () => {
+    const newErrors = {};
+    if (!title) newErrors.title = "Title is required";
+    if (!ingredients) newErrors.ingredients = "Ingredients are required";
+    if (!steps) newErrors.steps = "Preparation steps are required";
+    return newErrors;
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // ✅ Validation
-    if (!title || !ingredients || !steps) {
-      setError("Please fill out all fields.");
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
       return;
     }
 
-    // Make a recipe object
     const newRecipe = {
       id: Date.now(),
       title,
-      summary: steps.substring(0, 50) + "...", // short preview
-      image: "https://via.placeholder.com/150", // placeholder image
+      summary: steps.substring(0, 50) + "...",
+      image: "https://via.placeholder.com/150",
       ingredients: ingredients.split(","),
-      steps: steps.split("."),
+      instructions: steps.split("."),
     };
 
     onAddRecipe(newRecipe);
 
-    // Reset form
     setTitle("");
     setIngredients("");
     setSteps("");
-    setError("");
+    setErrors({});
   };
 
   return (
     <div className="max-w-xl mx-auto p-6 bg-white shadow-md rounded-xl">
       <h2 className="text-2xl font-bold mb-4 text-green-600">Add New Recipe</h2>
-
-      {error && <p className="text-red-500 mb-4">{error}</p>}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -49,6 +53,7 @@ function AddRecipeForm({ onAddRecipe }) {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
+          {errors.title && <p className="text-red-500 text-sm mt-1">{errors.title}</p>}
         </div>
 
         <div>
@@ -59,6 +64,7 @@ function AddRecipeForm({ onAddRecipe }) {
             value={ingredients}
             onChange={(e) => setIngredients(e.target.value)}
           />
+          {errors.ingredients && <p className="text-red-500 text-sm mt-1">{errors.ingredients}</p>}
         </div>
 
         <div>
@@ -69,11 +75,12 @@ function AddRecipeForm({ onAddRecipe }) {
             value={steps}
             onChange={(e) => setSteps(e.target.value)}
           />
+          {errors.steps && <p className="text-red-500 text-sm mt-1">{errors.steps}</p>}
         </div>
 
         <button
           type="submit"
-          className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+          className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition w-full"
         >
           Add Recipe
         </button>
