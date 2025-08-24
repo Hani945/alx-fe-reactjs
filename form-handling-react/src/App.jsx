@@ -1,5 +1,5 @@
-import RegistrationForm from "./components/RegistrationForm";
-import FormikForm from "./components/formikForm";
+import RegistrationForm from "./Components/RegistrationForm";
+import formikForm from "./Components/formikForm";
 
 export default function App() {
   return (
