@@ -1,30 +1,56 @@
+import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
-const validationSchema = Yup.object({
-  email: Yup.string().email("Invalid email").required("Email is required"),
-  password: Yup.string().required("Password is required"),
-});
+const formikForm = () => {
+  const initialValues = {
+    username: "",
+    email: "",
+    password: "",
+  };
 
-export default function FormikForm() {
+  // ✅ Yup validation schema
+  const validationSchema = Yup.object({
+    username: Yup.string().required("Username is required"),
+    email: Yup.string().email("Invalid email format").required("Email is required"),
+    password: Yup.string().required("Password is required"),
+  });
+
+  const handleSubmit = (values) => {
+    console.log("Form submitted with:", values);
+  };
+
   return (
     <Formik
-      initialValues={{ email: "", password: "" }}
-      validationSchema={validationSchema}
-      onSubmit={(values) => {
-        alert("Formik form submitted: " + JSON.stringify(values));
-      }}
+      initialValues={initialValues}
+      validationSchema={validationSchema}   // ✅ Yup schema
+      onSubmit={handleSubmit}
     >
-      <Form>
-        <h2>Formik Form</h2>
-        <Field type="email" name="email" placeholder="Email" />
-        <ErrorMessage name="email" component="p" />
-        <br />
-        <Field type="password" name="password" placeholder="Password" />
-        <ErrorMessage name="password" component="p" />
-        <br />
-        <button type="submit">Submit</button>
-      </Form>
+      {({ errors, touched }) => (
+        <Form data-testid="formikForm">
+          <div>
+            <label htmlFor="username">Username</label>
+            <Field id="username" name="username" type="text" />
+            <ErrorMessage name="username" component="div" />
+          </div>
+
+          <div>
+            <label htmlFor="email">Email</label>
+            <Field id="email" name="email" type="email" />
+            <ErrorMessage name="email" component="div" />
+          </div>
+
+          <div>
+            <label htmlFor="password">Password</label>
+            <Field id="password" name="password" type="password" />
+            <ErrorMessage name="password" component="div" />
+          </div>
+
+          <button type="submit">Register</button>
+        </Form>
+      )}
     </Formik>
   );
-}
+};
+
+export default formikForm;
