@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import RegistrationForm from "./components/formikForm";
 import PostsComponent from "./components/PostsComponent";
 import ProtectedRoute from "./components/ProtectedRoute";
+import BlogPost from "./components/BlogPost";
 
 function App() {
   return (
@@ -18,7 +19,7 @@ function App() {
         <Route path="/posts" element={<PostsComponent />} />
 
         {/* Task 2: Dynamic blog route */}
-        <Route path="/blog/:id" element={<h2>Blog Post</h2>} />
+        <Route path="/blog/:id" element={<BlogPost />} />
 
         {/* Task 2: Protected Profile route */}
         <Route
