@@ -1,42 +1,58 @@
-import React, { useState } from "react";
+import React from "react";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
 
 const RegistrationForm = () => {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState({});
+  const initialValues = {
+    username: "",
+    email: "",
+    password: "",
+  };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const newErrors = {};
+  const validationSchema = Yup.object({
+    username: Yup.string().required("Username is required"),
+    email: Yup.string().email("Invalid email").required("Email is required"),
+    password: Yup.string().required("Password is required"),
+  });
 
-    // 🔹 Checker expects these exact lines:
-    if (!username) newErrors.username = "Username is required";
-    if (!email) newErrors.email = "Email is required";
-    if (!password) newErrors.password = "Password is required";
-
-    setErrors(newErrors);
-
-    if (Object.keys(newErrors).length === 0) {
-      console.log("Form submitted:", { username, email, password });
-    }
+  const onSubmit = (values, { setSubmitting }) => {
+    console.log("Form data", values);
+    setSubmitting(false);
   };
 
   return (
-    <form onSubmit={handleSubmit} data-testid="controlledForm">
-      <div>
-        <label>Username</label>
-        <input
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        {errors.username && <div>{errors.username}</div>}
-      </div>
+    <Formik
+      initialValues={initialValues}
+      validationSchema={validationSchema}
+      onSubmit={onSubmit}
+    >
+      {({ isSubmitting }) => (
+        <Form data-testid="formikForm">
+          <div>
+            <label>Username</label>
+            <Field name="username" type="text" value={initialValues.username} />
+            <ErrorMessage name="username" component="div" />
+          </div>
 
-      <div>
-        <label>Email</label>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.
+          <div>
+            <label>Email</label>
+            <Field name="email" type="email" value={initialValues.email} />
+            <ErrorMessage name="email" component="div" />
+          </div>
+
+          <div>
+            <label>Password</label>
+            <Field name="password" type="password" value={initialValues.password} />
+            <ErrorMessage name="password" component="div" />
+          </div>
+
+          <button type="submit" disabled={isSubmitting}>
+            Register
+          </button>
+        </Form>
+      )}
+    </Formik>
+  );
+};
+
+export default RegistrationForm;
