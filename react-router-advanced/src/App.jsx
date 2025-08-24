@@ -1,39 +1,37 @@
+// src/App.jsx
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import RegistrationForm from "./components/RegistrationForm";
-import FormikForm from "./components/formikForm";
+import RegistrationForm from "./components/formikForm";
 import PostsComponent from "./components/PostsComponent";
 import ProtectedRoute from "./components/ProtectedRoute";
 
-const queryClient = new QueryClient();
-
-function BlogPost({ id }) {
-  return <h2>Blog Post ID: {id}</h2>;
-}
-
-export default function App() {
+function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <Router>
-        <Routes>
-          <Route path="/" element={<RegistrationForm />} />
-          <Route path="/formik" element={<FormikForm />} />
-          <Route path="/posts" element={<PostsComponent />} />
+    <Router>
+      <Routes>
+        {/* Default route */}
+        <Route path="/" element={<h1>Home Page</h1>} />
 
-          {/* ✅ Dynamic route */}
-          <Route path="/blog/:id" element={<BlogPost />} />
+        {/* Task 0: Formik Registration */}
+        <Route path="/register" element={<RegistrationForm />} />
 
-          {/* ✅ Protected route */}
-          <Route
-            path="/protected"
-            element={
-              <ProtectedRoute>
-                <h2>Protected Content</h2>
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-      </Router>
-    </QueryClientProvider>
+        {/* Task 1: Data fetching with React Query */}
+        <Route path="/posts" element={<PostsComponent />} />
+
+        {/* Task 2: Dynamic blog route */}
+        <Route path="/blog/:id" element={<h2>Blog Post</h2>} />
+
+        {/* Task 2: Protected Profile route */}
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <h2>Profile Page (Protected)</h2>
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </Router>
   );
 }
+
+export default App;
