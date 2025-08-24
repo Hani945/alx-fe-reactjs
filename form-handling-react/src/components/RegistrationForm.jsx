@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import FormikForm from "./formikForm";
 
 const RegistrationForm = () => {
   const [username, setUsername] = useState("");
