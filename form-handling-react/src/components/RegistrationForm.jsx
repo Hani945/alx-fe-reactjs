@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-function RegistrationForm() {
+const RegistrationForm = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -8,19 +8,22 @@ function RegistrationForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const newErrors = {};
-    if (!username) newErrors.username = "Username is required";
-    if (!email) newErrors.email = "Email is required";
-    if (!password) newErrors.password = "Password is required";
 
-    setErrors(newErrors);
+    const validationErrors = {};
+    if (!username) validationErrors.username = "Username is required";
+    if (!email) validationErrors.email = "Email is required";
+    if (!password) validationErrors.password = "Password is required";
 
-    if (Object.keys(newErrors).length === 0) {
-      alert(`Registered with Username: ${username}, Email: ${email}`);
-      setUsername("");
-      setEmail("");
-      setPassword("");
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
     }
+
+    console.log("Form submitted", { username, email, password });
+    setUsername("");
+    setEmail("");
+    setPassword("");
+    setErrors({});
   };
 
   return (
@@ -32,7 +35,7 @@ function RegistrationForm() {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
-        {errors.username && <p>{errors.username}</p>}
+        {errors.username && <span>{errors.username}</span>}
       </div>
 
       <div>
@@ -42,7 +45,7 @@ function RegistrationForm() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-        {errors.email && <p>{errors.email}</p>}
+        {errors.email && <span>{errors.email}</span>}
       </div>
 
       <div>
@@ -52,12 +55,12 @@ function RegistrationForm() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        {errors.password && <p>{errors.password}</p>}
+        {errors.password && <span>{errors.password}</span>}
       </div>
 
       <button type="submit">Register</button>
     </form>
   );
-}
+};
 
 export default RegistrationForm;
